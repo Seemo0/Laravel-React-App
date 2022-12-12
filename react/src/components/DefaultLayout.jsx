@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, Navigate, Outlet } from 'react-router-dom'
 import axiosClient from '../axios-client'
 import { useStateContext } from '../context/ContextProvider'
@@ -18,6 +19,13 @@ export default function DefaultLayout() {
         })
        
     }
+
+    useEffect(() => {
+      axiosClient.get('/user')
+        .then(({data}) => {
+          setUser(data)
+        })
+    }, [])
 
   return (
     <div id='defaultLayout'>

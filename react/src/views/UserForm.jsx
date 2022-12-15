@@ -1,5 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useStateContext } from '../context/ContextProvider';
+import axiosClient from '../axios-client'
+
 
 export default function UserForm() {
   const {id} = useParams()
@@ -16,16 +20,52 @@ export default function UserForm() {
   const {setNotification} = useStateContext()
 
   if(id) {
-    
+    useEffect(() => {
+      setLoading(true)
+      axiosClient.get(`/users/${id}`)
+      .then(({data}) => {
+        setLoading(false)
+        setUser(data)
+      })
+      .catch(() => {
+        setLoading(false)
+      })
+    })
   }
 
   const onSubmit = (e) => {
     e.preventDefault()
-
+    if (user.id) {
+      axiosClient.put(`/users/${user.id}`, user)
+        .then(() => {
+          setNotification('User was successfully updated')
+          navigate('/users')
+        })
+        .catch(err => {
+          const response = err.response;
+          if (response && response.status === 422) {
+            setErrors(response.data.errors)
+          }
+        })
+    } else {
+      axiosClient.post('/users', user)
+        .then(() => {
+          setNotification('User was successfully created')
+          navigate('/users')
+        })
+        .catch(err => {
+          const response = err.response;
+          if (response && response.status === 422) {
+            setErrors(response.data.errors)
+          }
+        })
+    }
   }
 
   return (
     <>
+    {user.id && <h1>Update User: {user.name}</h1>}
+    {!user.id && <h1>New User</h1>}
     <div className='card animated fadeInDown'>
       {loading && (
         <div className='text-center'>

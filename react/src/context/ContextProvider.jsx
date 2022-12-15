@@ -24,7 +24,7 @@ export const ContextProvider = ({children}) => {
         }
     }
 
-    const setNotification = message => {
+    const setNotification = (message) => {
         _setNotification(message);
     
         setTimeout(() => {

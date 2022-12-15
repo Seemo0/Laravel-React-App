@@ -48,6 +48,11 @@ export default function DefaultLayout() {
           
           <Outlet/>
         </main>
+        {notification &&
+          <div className="notification">
+            {notification}
+          </div>
+        }
       </div>
     </div>
   )
